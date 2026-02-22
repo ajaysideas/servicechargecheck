@@ -329,8 +329,6 @@ HTML = """
       <h3 style="margin:0;">Verify your own charge</h3>
       <p class="muted">Curious about your charge? Upload your latest invoice to see where you stand.</p>
       <a class="btn" href="/verify">Upload invoice</a>
-      <p class="muted" style="margin-top:10px;"> Please redact your name, flat number, and any account/reference numbers before uploading.
-      </p>
       <p style="margin-top:16px;">
       <span style="opacity:0.8;">All submissions are marked <b>Unverified</b> until reviewed.</span>
       </p>
