@@ -7,7 +7,7 @@ from flask import Flask, request, render_template_string
 CSV_PATH = "ServiceCharge_Main.csv"
 GOOGLE_FORM_URL = "https://forms.gle/jif98v7tmG5ioFnG8"
 # --- Settings you can tweak ---
-INFLATION_RATE = 0.034     # 3.4% (your requirement)
+INFLATION_RATE = 0.03     # 3% (your requirement)
 FORECAST_YEARS = 5
 LOW_BAND = 0.90
 HIGH_BAND = 1.10
@@ -402,44 +402,40 @@ def home():
 @app.route("/methodology")
 def methodology():
     return """
-    <div style="font-family:system-ui; max-width:900px; margin:40px auto; padding:0 20px; line-height:1.7;">
+    <div style="font-family:system-ui; max-width:900px; margin:40px auto; padding:0 20px; line-height:1.75;">
       <h1>Methodology</h1>
 
-      <p><b>Data source:</b> Benchmarks are built from service charge demands/invoices and historical billing records in the dataset.
-      User uploads are captured as <b>Unverified</b> and reviewed before they’re included in benchmark calculations.</p>
+      <p><b>Data source:</b> Benchmarks are derived from service charge demands and historic billing records contained within the tracked dataset.
+      User submissions are initially categorised as <b>Unverified</b> and then reviewed before being included in the benchmark calculations.</p>
 
-      <p><b>What’s being benchmarked:</b> The core figure on the site is an <b>annualised service charge (£/year)</b>, plus the same benchmark expressed as <b>£/month</b>, <b>£/sqft</b>, and <b>£/sqm</b> where floor area is available.</p>
+      <p><b>Core metric:</b> The primary benchmark displayed is the annualised service charge (£/year).
+      For comparability, the same figure is also expressed as £/month, and where floor area is available as £/sqft and £/sqm.</p>
 
-      <p><b>Normalising different billing periods:</b> Managing agents bill in different cycles (half-yearly, quarterly, monthly, April–September, October–March, etc.).
-      To make like-for-like comparisons, each invoice is normalised to a daily rate and annualised:</p>
-
+      <p><b>Normalisation of billing periods:</b> Service charge demands are issued on varying billing cycles (e.g. half-yearly, quarterly, monthly, April–September, etc.).
+      To ensure comparability, each invoice is normalised to a daily rate and then annualised as follows:</p>
       <ul>
-        <li><b>Daily rate</b> = Amount billed ÷ number of days in the billed period</li>
-        <li><b>Annualised amount</b> = Daily rate × 365</li>
+        <li>Daily rate = Amount billed ÷ number of days in the billing period</li>
+        <li>Annualised amount = Daily rate × 365</li>
+      </ul>
+      <p>This approach avoids doubling half-year invoices, which can misstate the true annual cost.</p>
+
+      <p><b>Intensity metrics:</b> Where floor area is available:</p>
+      <ul>
+        <li>£/sqft = Annualised amount ÷ floor area (sqft)</li>
+        <li>£/sqm = Annualised amount ÷ floor area (sqm)</li>
       </ul>
 
-      <p>This approach avoids the common trap of simply doubling a half-year invoice, which can misstate the true annual cost when charges step up/down mid-year.</p>
+      <p>If area is in square feet, square metres are calculated using the following conversion (1 sqm = 10.7639 sqft).</p>
 
-      <p><b>£/sqft and £/sqm:</b> Where floor area is available, intensity metrics are calculated off the annualised amount:</p>
-      <ul>
-        <li><b>£/sqft</b> = Annualised amount ÷ area (sqft)</li>
-        <li><b>£/sqm</b> = Annualised amount ÷ area (sqm)</li>
-      </ul>
+      <p><b>Aggregation approach:</b> Service charge datasets often include outliers (e.g. major works, adjustments to the reserve fund, balancing charges).
+      Using the median provides a better representation of the typical charges within each sector.</p>
 
-      <p>If area is supplied in sqft only, sqm is derived using the standard conversion (<b>1 sqm = 10.7639 sqft</b>).</p>
+      <p><b>Geography Used:</b> The primary comparison is the postcode sector (e.g. E14 4).
+      A London-wide benchmark, calculated from the full dataset, is displayed for context.</p>
 
-      <p><b>How we aggregate:</b> Benchmarks use the <b>median</b> rather than the mean.
-      In practice, service charge data contains genuine outliers (e.g., reserve fund spikes, major works years, balancing charges).
-      The median is more stable and is the preferred statistic for a “typical” benchmark.</p>
+      <p><b>Forecasting:</b> The five-year forecast is at 3% per annum, at time of publication.
+      This projection is indicative and not predictive of any specific building’s future budget.</p>
 
-      <p><b>Geography used:</b> The primary benchmark is the <b>postcode sector</b> (e.g., E14 9).
-      Where sector coverage is thin, the comparison is shown alongside a <b>London benchmark</b> calculated from the full tracked dataset.</p>
-
-      <p><b>Forecasting:</b> The 5-year forecast applies a simple inflation assumption of <b>3.4% per annum</b> to the current benchmark.
-      It’s intended as a planning view rather than a prediction of any specific building’s budget.</p>
-
-      <p><b>Reliability:</b> We display the number of <b>verified entries</b> used in each benchmark.
-      Larger sample sizes generally produce more reliable medians, particularly in developments with multiple unit types and billing structures.</p>
 
       <p style="margin-top:40px;"><a href="/">← Back to home</a></p>
     </div>
