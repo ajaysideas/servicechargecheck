@@ -202,7 +202,14 @@ HTML = """
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-</head>
+  </head>
+  <footer style="margin-top:60px; padding:30px 0; text-align:center; font-size:14px; opacity:0.7;">
+    <p>
+        Built by Ajay Choli |
+        <a href="/methodology">Methodology</a> |
+        <a href="/disclaimer">Disclaimer</a>
+    </p>
+  </footer>
 <body>
 
   <div class="center">
@@ -392,7 +399,108 @@ HTML = """
 def home():
     return render_template_string(HTML, postcode="", error=None, sector=None)
 
+@app.route("/methodology")
+def methodology():
+    return """
+    <div style="font-family:system-ui; max-width:900px; margin:40px auto; padding:0 20px; line-height:1.6;">
+        <h1>Methodology</h1>
 
+        <h3>Data Source</h3>
+        <p>
+        Benchmarks are derived from submitted service charge invoices and historical billing data.
+        Entries marked as “Unverified” are user-submitted and reviewed before inclusion in benchmark calculations.
+        </p>
+
+        <h3>Annualisation Logic</h3>
+        <p>
+        Service charge invoices may cover inconsistent billing periods (e.g. 6 months, quarterly, April–September, etc.).
+        Each invoice is normalised using the following approach:
+        </p>
+        <ul>
+            <li>Daily Rate = Service Charge Amount ÷ Number of days in billing period</li>
+            <li>Annualised Amount = Daily Rate × 365</li>
+        </ul>
+        <p>
+        This ensures fair comparison across buildings and billing structures.
+        </p>
+
+        <h3>£ per Sq Ft and £ per Sq M</h3>
+        <p>
+        Where floor area is available:
+        </p>
+        <ul>
+            <li>£/sqft = Annualised Amount ÷ Square Footage</li>
+            <li>£/sqm = Annualised Amount ÷ Square Metres</li>
+        </ul>
+        <p>
+        If only sqft is available, sqm is calculated using the industry conversion factor (1 sqm = 10.7639 sqft).
+        </p>
+
+        <h3>Aggregation Method</h3>
+        <p>
+        Benchmarks use the <strong>median</strong> annual service charge rather than the mean.
+        This reduces distortion from extreme outliers (e.g. unusually high reserve fund years).
+        </p>
+
+        <h3>Benchmark Hierarchy</h3>
+        <ul>
+            <li>Primary: Postcode Sector</li>
+            <li>Secondary: London-wide dataset benchmark</li>
+        </ul>
+
+        <h3>Forecast Assumption</h3>
+        <p>
+        5-year projections are calculated using a 3.4% annual inflation assumption
+        (based on Bank of England forward guidance at time of publication).
+        </p>
+
+        <h3>Sample Size & Reliability</h3>
+        <p>
+        Each benchmark displays the number of verified entries used in calculation.
+        Larger sample sizes improve reliability.
+        </p>
+
+        <p style="margin-top:40px;">
+        <a href="/">← Back to home</a>
+        </p>
+    </div>
+    """
+
+@app.route("/disclaimer")
+def disclaimer():
+    return """
+    <div style="font-family:system-ui; max-width:900px; margin:40px auto; padding:0 20px; line-height:1.6;">
+        <h1>Disclaimer</h1>
+
+        <p>
+        ServiceChargeCheck.com is an independent benchmarking tool for informational purposes only.
+        </p>
+
+        <p>
+        While reasonable efforts are made to ensure data accuracy, no guarantee is provided regarding
+        completeness, reliability, or suitability for any specific purpose.
+        </p>
+
+        <p>
+        Benchmarks are based on available submitted data and may not represent the full market.
+        Individual building characteristics, reserve funding, major works, and managing agent decisions
+        may significantly affect service charge levels.
+        </p>
+
+        <p>
+        This website does not provide legal, financial, or investment advice.
+        Users should seek professional advice before making decisions based on this information.
+        </p>
+
+        <p>
+        Submitted invoices should be redacted before upload. Personal data should not be shared.
+        </p>
+
+        <p style="margin-top:40px;">
+        <a href="/">← Back to home</a>
+        </p>
+    </div>
+    """
 from flask import render_template_string
 
 @app.route("/verify")
