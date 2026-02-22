@@ -5,7 +5,7 @@ import pandas as pd
 from flask import Flask, request, render_template_string
 
 CSV_PATH = "ServiceCharge_Main.csv"
-
+GOOGLE_FORM_URL = "https://forms.gle/jif98v7tmG5ioFnG8"
 # --- Settings you can tweak ---
 INFLATION_RATE = 0.034     # 3.4% (your requirement)
 FORECAST_YEARS = 5
@@ -329,6 +329,11 @@ HTML = """
       <h3 style="margin:0;">Verify your own charge</h3>
       <p class="muted">Curious about your charge? Upload your latest invoice to see where you stand.</p>
       <a class="btn" href="/verify">Upload invoice</a>
+      <p class="muted" style="margin-top:10px;"> Please redact your name, flat number, and any account/reference numbers before uploading.
+      </p>
+      <p style="margin-top:16px;">
+      <span style="opacity:0.8;">All submissions are marked <b>Unverified</b> until reviewed.</span>
+      </p>
     </div>
 
     <script>
@@ -390,17 +395,40 @@ def home():
     return render_template_string(HTML, postcode="", error=None, sector=None)
 
 
+from flask import render_template_string
+
 @app.route("/verify")
 def verify():
-    # Placeholder page (next iteration: upload form + processing)
-    return """
-    <div style="font-family:system-ui; max-width:720px; margin:40px auto; padding:0 16px;">
-      <h1>Upload to verify (coming soon)</h1>
-      <p>This will allow you to upload a recent service charge invoice/demand to benchmark your specific property.</p>
-      <p><a href="/">← Back</a></p>
-    </div>
-    """
+    return render_template_string(
+        """
+        <div style="font-family:system-ui; max-width:720px; margin:40px auto; padding:0 16px;">
+          <h1>Upload to verify</h1>
 
+          <p>
+            Upload your latest service charge invoice/demand to help improve the dataset.
+            <b>All submissions are marked Unverified</b> until reviewed.
+          </p>
+
+          <div style="padding:14px 16px; border:1px solid rgba(0,0,0,0.12); border-radius:12px; margin:16px 0;">
+            <p style="margin:0 0 10px 0;"><b>Before uploading:</b></p>
+            <ul style="margin:0; padding-left:18px;">
+              <li>Please redact your <b>name</b>, <b>flat number</b>, and any <b>account/reference numbers</b>.</li>
+              <li>Keep: postcode, billing period dates, totals, and (if shown) floor area.</li>
+            </ul>
+          </div>
+
+          <p>
+            <a href="{{ google_form_url }}" target="_blank" rel="noopener"
+               style="display:inline-block; padding:10px 14px; border-radius:10px; background:#111; color:#fff; text-decoration:none;">
+              Open upload form
+            </a>
+          </p>
+
+          <p style="margin-top:18px;"><a href="/">← Back</a></p>
+        </div>
+        """,
+        google_form_url=GOOGLE_FORM_URL
+    )
 
 @app.route("/search")
 def search():
@@ -508,6 +536,7 @@ def search():
         min_n=MIN_N_SECTOR,
         low_band=LOW_BAND,
         high_band=HIGH_BAND,
+        google_form_url=GOOGLE_FORM_URL
     )
 
 
